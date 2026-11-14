@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reflex Games</title>
+<meta name="description" content="Reflex Games – gry na refleks z kotami. Reflex games with cats.">
+<meta name="theme-color" content="#2E2626">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='44' fill='%23E5533D' stroke='%23231B1B' stroke-width='6'/%3E%3Cpath d='M14 40 Q50 20 86 40 M10 56 Q50 34 90 56 M18 72 Q50 50 82 72' fill='none' stroke='%23231B1B' stroke-opacity='.35' stroke-width='5'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #2E2626;
+    --bg-deep: #231B1B;
+    --ink: #1A1313;
+    --text: #F6EEE6;
+    --muted: #C9B9AC;
+    --gold: #FFD54A;
+    --gold-dark: #E0A800;
+    --card: rgba(35, 27, 27, 0.78);
+    --line: rgba(255, 255, 255, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; height: 100%; }
+
+  body {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(ellipse at 50% 40%, #3A3030 0%, var(--bg) 55%, var(--bg-deep) 100%);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow-x: hidden;
+  }
+
+  .yarns {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .yarn {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--s);
+    height: var(--s);
+    color: var(--c);
+    opacity: 0.5;
+    animation: drift var(--d) ease-in-out infinite alternate;
+    animation-delay: var(--delay, 0s);
+  }
+
+  .yarn svg {
+    width: 100%;
+    height: 100%;
+    animation: spin calc(var(--d) * 2.5) linear infinite;
+    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.35));
+  }
+
+  @keyframes drift {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(var(--dx), var(--dy)); }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding: 48px 16px 24px;
+    text-align: center;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(3rem, 13vw, 7.5rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    color: var(--gold);
+    -webkit-text-stroke: 0.06em var(--ink);
+    paint-order: stroke fill;
+    text-shadow: 0 0.07em 0 var(--gold-dark), 0 0.12em 0 var(--ink), 0 0.25em 0.35em rgba(0, 0, 0, 0.45);
+    animation: pop 0.9s cubic-bezier(.2, 1.6, .4, 1) both;
+  }
+
+  h1 span { display: inline-block; }
+
+  @keyframes pop {
+    from { transform: scale(0.6); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .tagline {
+    margin: 0;
+    font-size: clamp(1rem, 3.6vw, 1.35rem);
+    color: var(--muted);
+  }
+
+  .tagline .sep { color: var(--gold); margin: 0 0.4em; }
+
+  .game {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px 14px 14px;
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .game-icon {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--bg);
+    border: 2px solid var(--line);
+    display: grid;
+    place-items: center;
+  }
+
+  .game-icon svg { width: 52px; height: 52px; }
+
+  .game-name {
+    margin: 0 0 6px;
+    font-size: 1.35rem;
+    font-weight: 800;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .cat {
+    position: relative;
+    z-index: 1;
+    height: 92px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+  }
+
+  .cat svg {
+    width: 190px;
+    height: 150px;
+    flex: none;
+    animation: peek 1.4s 0.6s cubic-bezier(.2, 1.4, .4, 1) both;
+  }
+
+  @keyframes peek {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  .eye {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: blink 5s infinite;
+  }
+
+  @keyframes blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+
+  footer {
+    position: relative;
+    z-index: 2;
+    background: var(--bg-deep);
+    border-top: 3px solid var(--ink);
+    padding: 18px 16px 22px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 28px;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  footer a {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  footer a:hover, footer a:focus-visible { color: var(--gold); border-color: var(--gold); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <clipPath id="ball-clip"><circle cx="50" cy="50" r="44"/></clipPath>
+    <symbol id="yarn" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="44" fill="currentColor"/>
+      <g clip-path="url(#ball-clip)" fill="none" stroke="#000" stroke-opacity="0.28" stroke-width="3.5" stroke-linecap="round">
+        <ellipse cx="50" cy="50" rx="44" ry="16" transform="rotate(-30 50 50)"/>
+        <ellipse cx="50" cy="50" rx="44" ry="28" transform="rotate(-30 50 50)"/>
+        <ellipse cx="50" cy="50" rx="44" ry="38" transform="rotate(-30 50 50)"/>
+        <ellipse cx="50" cy="50" rx="14" ry="44" transform="rotate(25 50 50)"/>
+        <ellipse cx="50" cy="50" rx="26" ry="44" transform="rotate(25 50 50)"/>
+        <path d="M8 66 Q50 30 92 40"/>
+        <path d="M12 76 Q52 44 90 54"/>
+      </g>
+      <circle cx="35" cy="33" r="12" fill="#fff" fill-opacity="0.22"/>
+      <circle cx="50" cy="50" r="44" fill="none" stroke="#1A1313" stroke-width="4"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="yarns" aria-hidden="true">
+  <div class="yarn" style="--x:6%;--y:10%;--s:90px;--c:#E5533D;--d:9s;--dx:40px;--dy:30px"><svg><use href="#yarn"/></svg></div>
+  <div class="yarn" style="--x:78%;--y:8%;--s:120px;--c:#3D8BE5;--d:11s;--dx:-30px;--dy:40px;--delay:-3s"><svg><use href="#yarn"/></svg></div>
+  <div class="yarn" style="--x:88%;--y:48%;--s:70px;--c:#5BBF4A;--d:8s;--dx:-40px;--dy:-30px;--delay:-2s"><svg><use href="#yarn"/></svg></div>
+  <div class="yarn" style="--x:2%;--y:55%;--s:110px;--c:#F2C230;--d:12s;--dx:30px;--dy:-40px;--delay:-5s"><svg><use href="#yarn"/></svg></div>
+  <div class="yarn" style="--x:40%;--y:4%;--s:60px;--c:#F08A2C;--d:10s;--dx:50px;--dy:20px;--delay:-1s"><svg><use href="#yarn"/></svg></div>
+  <div class="yarn" style="--x:62%;--y:70%;--s:95px;--c:#9A5BD6;--d:13s;--dx:-50px;--dy:-20px;--delay:-6s"><svg><use href="#yarn"/></svg></div>
+  <div class="yarn" style="--x:20%;--y:78%;--s:75px;--c:#F07BB5;--d:9.5s;--dx:40px;--dy:-30px;--delay:-4s"><svg><use href="#yarn"/></svg></div>
+  <div class="yarn" style="--x:28%;--y:30%;--s:50px;--c:#EDE6DD;--d:14s;--dx:-30px;--dy:30px;--delay:-7s"><svg><use href="#yarn"/></svg></div>
+  <div class="yarn" style="--x:68%;--y:26%;--s:55px;--c:#9C9494;--d:10.5s;--dx:30px;--dy:-40px;--delay:-2.5s"><svg><use href="#yarn"/></svg></div>
+  <div class="yarn" style="--x:46%;--y:84%;--s:65px;--c:#9A6B45;--d:11.5s;--dx:-40px;--dy:-30px;--delay:-8s"><svg><use href="#yarn"/></svg></div>
+</div>
+
+<main>
+  <h1><span>Reflex</span> <span>Games</span></h1>
+  <p class="tagline">Gry na refleks z kotami<span class="sep">·</span>Reflex games with cats</p>
+
+  <div class="game">
+    <div class="game-icon" aria-hidden="true">
+      <svg viewBox="0 0 100 100"><use href="#yarn" style="color:#5BBF4A"/></svg>
+    </div>
+    <div>
+      <p class="game-name">Cat-Flex</p>
+      <span class="badge">Wkrótce w Google Play · Coming soon</span>
+    </div>
+  </div>
+</main>
+
+<div class="cat" aria-hidden="true">
+  <svg viewBox="0 0 190 150">
+    <g stroke="#1A1313" stroke-width="5" stroke-linejoin="round">
+      <path d="M38 70 L46 14 L82 46 Z" fill="#F08A2C"/>
+      <path d="M152 70 L144 14 L108 46 Z" fill="#F08A2C"/>
+      <path d="M50 58 L52 32 L70 48 Z" fill="#F7B6C2" stroke-width="3"/>
+      <path d="M140 58 L138 32 L120 48 Z" fill="#F7B6C2" stroke-width="3"/>
+      <ellipse cx="95" cy="100" rx="66" ry="58" fill="#F08A2C"/>
+      <path d="M78 46 Q86 60 82 72 M95 42 L95 66 M112 46 Q104 60 108 72" fill="none" stroke="#C4621A" stroke-width="5" stroke-linecap="round"/>
+      <g class="eye"><ellipse cx="70" cy="88" rx="13" ry="16" fill="#fff"/><circle cx="73" cy="91" r="7" fill="#1A1313" stroke="none"/><circle cx="76" cy="87" r="2.5" fill="#fff" stroke="none"/></g>
+      <g class="eye"><ellipse cx="120" cy="88" rx="13" ry="16" fill="#fff"/><circle cx="123" cy="91" r="7" fill="#1A1313" stroke="none"/><circle cx="126" cy="87" r="2.5" fill="#fff" stroke="none"/></g>
+      <path d="M89 108 L101 108 L95 115 Z" fill="#F07BB5" stroke-width="3"/>
+      <path d="M95 115 Q95 122 86 123 M95 115 Q95 122 104 123" fill="none" stroke-width="3" stroke-linecap="round"/>
+      <path d="M58 110 L22 104 M58 117 L24 120 M132 110 L168 104 M132 117 L166 120" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+  </svg>
+</div>
+
+<footer>
+  <a href="catflex/privacy/">Polityka prywatności · Privacy policy</a>
+  <a href="mailto:[E-MAIL]">Kontakt · Contact</a>
+  <span>© 2026 Reflex Games</span>
+</footer>
+
+</body>
+</html>
